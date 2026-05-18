@@ -2,32 +2,29 @@ package com.example.myapplication
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.Fragment
 import com.example.myapplication.databinding.ActivityMainBinding
-import com.example.myapplication.di.AppContainer
-import com.example.myapplication.domain.model.User
-import com.example.myapplication.presentation.model.ServiceConnectionUiState
-import com.example.myapplication.presentation.ui.ServiceStatusFragment
-import com.example.myapplication.presentation.ui.UserListFragment
-import com.example.myapplication.presentation.ui.dialog.DeleteUserDialogFragment
-import com.example.myapplication.presentation.ui.dialog.UserFormDialogFragment
-import com.example.myapplication.presentation.viewmodel.UserViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.example.myapplication.presentation.ui.AidlUserListFragment
+import com.example.myapplication.presentation.ui.RoomUserListFragment
+import com.example.myapplication.presentation.ui.ScreenConfiguration
+import com.example.myapplication.presentation.ui.ScreenConfigurationHost
+import com.example.myapplication.presentation.ui.SourcePickerFragment
+import com.example.myapplication.presentation.ui.UserActionHandler
 
-class MainActivity : AppCompatActivity(), UserListFragment.UserItemListener {
+class MainActivity : AppCompatActivity(), SourcePickerFragment.Navigator, ScreenConfigurationHost {
 
     private lateinit var binding: ActivityMainBinding
-
-    private val viewModel: UserViewModel by viewModels {
-        AppContainer.provideUserViewModelFactory(applicationContext)
-    }
-
-    private var currentServiceState: ServiceConnectionUiState = ServiceConnectionUiState.CONNECTING
+    private var currentScreenConfiguration = ScreenConfiguration(
+        titleRes = R.string.title_source_picker,
+        showBackButton = false,
+        showFab = false,
+        showRefresh = false,
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,19 +39,18 @@ class MainActivity : AppCompatActivity(), UserListFragment.UserItemListener {
             insets
         }
         setSupportActionBar(binding.toolbar)
-
-        binding.fab.setOnClickListener {
-            UserFormDialogFragment.newAddDialog()
-                .show(supportFragmentManager, UserFormDialogFragment.TAG)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
 
-        registerDialogResults()
-        viewModel.connectService()
-
-        observeViewModel()
+        binding.fab.setOnClickListener {
+            (currentFragment() as? UserActionHandler)?.onAddRequested()
+        }
 
         if (savedInstanceState == null) {
-            showFragment(ServiceConnectionUiState.CONNECTING)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SourcePickerFragment(), SourcePickerFragment.TAG)
+                .commit()
         }
     }
 
@@ -64,15 +60,19 @@ class MainActivity : AppCompatActivity(), UserListFragment.UserItemListener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.findItem(R.id.action_refresh_users)?.isVisible =
-            currentServiceState == ServiceConnectionUiState.CONNECTED
+        menu.findItem(R.id.action_refresh_users)?.isVisible = currentScreenConfiguration.showRefresh
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_refresh_users -> {
-                viewModel.loadUsers()
+                (currentFragment() as? UserActionHandler)?.onRefreshRequested()
+                true
+            }
+
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
                 true
             }
 
@@ -80,92 +80,39 @@ class MainActivity : AppCompatActivity(), UserListFragment.UserItemListener {
         }
     }
 
-    override fun onUserClicked(user: User) {
-        UserFormDialogFragment.newEditDialog(user)
-            .show(supportFragmentManager, UserFormDialogFragment.TAG)
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
-    override fun onUserLongClicked(user: User) {
-        DeleteUserDialogFragment.newInstance(user.id, user.name)
-            .show(supportFragmentManager, DeleteUserDialogFragment.TAG)
+    override fun openAidlUsers() {
+        navigateTo(AidlUserListFragment(), AidlUserListFragment.TAG)
     }
 
-    private fun registerDialogResults() {
-        supportFragmentManager.setFragmentResultListener(
-            UserFormDialogFragment.REQUEST_KEY,
-            this,
-        ) { _, bundle ->
-            val user = User(
-                id = bundle.getLong(UserFormDialogFragment.RESULT_USER_ID),
-                name = bundle.getString(UserFormDialogFragment.RESULT_USER_NAME).orEmpty(),
-                age = bundle.getInt(UserFormDialogFragment.RESULT_USER_AGE),
-                weight = bundle.getFloat(UserFormDialogFragment.RESULT_USER_WEIGHT),
-            )
-
-            if (bundle.getBoolean(UserFormDialogFragment.RESULT_IS_EDIT_MODE)) {
-                viewModel.updateUser(user)
-            } else {
-                viewModel.addUser(user)
-            }
-        }
-
-        supportFragmentManager.setFragmentResultListener(
-            DeleteUserDialogFragment.REQUEST_KEY,
-            this,
-        ) { _, bundle ->
-            viewModel.deleteUser(bundle.getLong(DeleteUserDialogFragment.RESULT_USER_ID))
-        }
+    override fun openRoomUsers() {
+        navigateTo(RoomUserListFragment(), RoomUserListFragment.TAG)
     }
 
-    private fun observeViewModel() {
-        viewModel.serviceConnectionState.observe(this) { state ->
-            currentServiceState = state
-            showFragment(state)
-            binding.toolbar.subtitle = when (state) {
-                ServiceConnectionUiState.CONNECTING -> getString(R.string.service_connecting_subtitle)
-                ServiceConnectionUiState.CONNECTED -> getString(R.string.service_connected_subtitle)
-                ServiceConnectionUiState.DISCONNECTED -> getString(R.string.service_disconnected_subtitle)
-            }
-            if (state == ServiceConnectionUiState.CONNECTED) {
-                binding.fab.show()
-            } else {
-                binding.fab.hide()
-            }
-            invalidateOptionsMenu()
-        }
-
-        viewModel.message.observe(this) { message ->
-            if (!message.isNullOrBlank()) {
-                val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
-                if (binding.fab.isShown) {
-                    snackbar.setAnchorView(binding.fab)
-                }
-                snackbar.show()
-                viewModel.consumeMessage()
-            }
-        }
-    }
-
-    private fun showFragment(state: ServiceConnectionUiState) {
-        val targetTag = if (state == ServiceConnectionUiState.CONNECTED) {
-            UserListFragment.TAG
+    override fun updateScreenConfiguration(configuration: ScreenConfiguration) {
+        currentScreenConfiguration = configuration
+        binding.toolbar.setTitle(configuration.titleRes)
+        supportActionBar?.setDisplayHomeAsUpEnabled(configuration.showBackButton)
+        if (configuration.showFab) {
+            binding.fab.show()
         } else {
-            ServiceStatusFragment.TAG
+            binding.fab.hide()
         }
+        invalidateOptionsMenu()
+    }
 
-        val currentTag = supportFragmentManager.findFragmentById(R.id.fragment_container)?.tag
-        if (currentTag == targetTag) {
-            return
-        }
-
-        val fragment = if (state == ServiceConnectionUiState.CONNECTED) {
-            UserListFragment()
-        } else {
-            ServiceStatusFragment()
-        }
-
+    private fun navigateTo(fragment: Fragment, tag: String) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment, targetTag)
+            .replace(R.id.fragment_container, fragment, tag)
+            .addToBackStack(tag)
             .commit()
+    }
+
+    private fun currentFragment(): Fragment? {
+        return supportFragmentManager.findFragmentById(R.id.fragment_container)
     }
 }
