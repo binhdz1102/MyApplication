@@ -21,22 +21,6 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="24dp">
-
-        <TextView
-            android:id="@+id/text_empty_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty_users_title"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-        <TextView
-            android:id="@+id/text_empty_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="@string/empty_users_message"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
     </LinearLayout>
 
     <LinearLayout

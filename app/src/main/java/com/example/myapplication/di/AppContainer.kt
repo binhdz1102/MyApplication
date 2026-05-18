@@ -2,6 +2,7 @@ package com.example.myapplication.di
 
 import android.content.Context
 import com.example.myapplication.data.repository.AidlUserRepository
+import com.example.myapplication.data.repository.AidlRoomUserRepository
 import com.example.myapplication.data.repository.RoomUserRepository
 import com.example.myapplication.domain.repository.UserRepository
 import com.example.myapplication.domain.usecase.AddUserUseCase
@@ -21,6 +22,9 @@ object AppContainer {
     @Volatile
     private var roomUserRepository: UserRepository? = null
 
+    @Volatile
+    private var aidlRoomUserRepository: UserRepository? = null
+
     private fun provideAidlUserRepository(context: Context): UserRepository {
         return aidlUserRepository ?: synchronized(this) {
             aidlUserRepository ?: AidlUserRepository(context).also { aidlUserRepository = it }
@@ -33,6 +37,12 @@ object AppContainer {
         }
     }
 
+    private fun provideAidlRoomUserRepository(context: Context): UserRepository {
+        return aidlRoomUserRepository ?: synchronized(this) {
+            aidlRoomUserRepository ?: AidlRoomUserRepository(context).also { aidlRoomUserRepository = it }
+        }
+    }
+
     fun provideAidlUserViewModelFactory(context: Context): UserViewModelFactory {
         val repository = provideAidlUserRepository(context.applicationContext)
         return createUserViewModelFactory(repository)
@@ -40,6 +50,11 @@ object AppContainer {
 
     fun provideRoomUserViewModelFactory(context: Context): UserViewModelFactory {
         val repository = provideRoomUserRepository(context.applicationContext)
+        return createUserViewModelFactory(repository)
+    }
+
+    fun provideAidlRoomUserViewModelFactory(context: Context): UserViewModelFactory {
+        val repository = provideAidlRoomUserRepository(context.applicationContext)
         return createUserViewModelFactory(repository)
     }
 

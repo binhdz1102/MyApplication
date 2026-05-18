@@ -1,5 +1,6 @@
 package com.example.myapplication.data.repository
 
+import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -17,8 +18,9 @@ import com.example.myapplication.domain.repository.ConnectionStateListener
 import com.example.myapplication.domain.repository.UserRepository
 import java.util.concurrent.CopyOnWriteArraySet
 
-class AidlUserRepository(
+open class AidlUserRepository(
     context: Context,
+    private val serviceClass: Class<out Service> = UserAidlService::class.java,
 ) : UserRepository {
 
     private val appContext = context.applicationContext
@@ -61,7 +63,7 @@ class AidlUserRepository(
 
         isBinding = true
         val didBind = appContext.bindService(
-            Intent(appContext, UserAidlService::class.java),
+            Intent(appContext, serviceClass),
             connection,
             Context.BIND_AUTO_CREATE,
         )

@@ -14,6 +14,7 @@ class SourcePickerFragment : Fragment() {
     interface Navigator {
         fun openAidlUsers()
         fun openRoomUsers()
+        fun openAidlRoomUsers()
     }
 
     private var _binding: FragmentSourcePickerBinding? = null
@@ -44,6 +45,9 @@ class SourcePickerFragment : Fragment() {
         }
         binding.buttonUseRoom.setOnClickListener {
             navigator?.openRoomUsers()
+        }
+        binding.buttonUseAidlRoom.setOnClickListener {
+            navigator?.openAidlRoomUsers()
         }
     }
 

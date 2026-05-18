@@ -3,12 +3,15 @@
     <string name="title_source_picker">Chon nguon du lieu</string>
     <string name="title_aidl_users">Danh sach user - AIDL</string>
     <string name="title_room_users">Danh sach user - Room</string>
+    <string name="title_aidl_room_users">Danh sach user - AIDL + Room</string>
     <string name="source_picker_title">Chon cach doc danh sach user</string>
     <string name="source_picker_message">Activity se mo fragment tuong ung sau khi ban chon nguon du lieu.</string>
     <string name="source_option_aidl_title">Using AIDL as server</string>
     <string name="source_option_aidl_message">Doc user tu service AIDL chay o process rieng.</string>
     <string name="source_option_room_title">Using Room as server</string>
     <string name="source_option_room_message">Doc user tu Room database noi bo.</string>
+    <string name="source_option_aidl_room_title">Using AIDL as server with Room database</string>
+    <string name="source_option_aidl_room_message">Service AIDL doc va ghi du lieu bang Room o phia server.</string>
     <string name="action_add_user">Them user</string>
     <string name="action_read_users">Lam moi</string>
     <string name="action_retry_connection">Thu ket noi lai</string>

@@ -53,4 +53,19 @@
         android:text="@string/source_option_room_message"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_use_aidl_room"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/source_option_aidl_room_title" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/source_option_aidl_room_message"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+
 </LinearLayout>

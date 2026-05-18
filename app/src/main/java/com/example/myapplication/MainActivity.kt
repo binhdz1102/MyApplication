@@ -86,11 +86,21 @@ class MainActivity : AppCompatActivity(), SourcePickerFragment.Navigator, Screen
     }
 
     override fun openAidlUsers() {
-        navigateTo(AidlUserListFragment(), AidlUserListFragment.TAG)
+        navigateTo(
+            AidlUserListFragment.newAidlFragment(),
+            AidlUserListFragment.TAG_AIDL,
+        )
     }
 
     override fun openRoomUsers() {
         navigateTo(RoomUserListFragment(), RoomUserListFragment.TAG)
+    }
+
+    override fun openAidlRoomUsers() {
+        navigateTo(
+            AidlUserListFragment.newAidlRoomDatabaseFragment(),
+            AidlUserListFragment.TAG_AIDL_ROOM,
+        )
     }
 
     override fun updateScreenConfiguration(configuration: ScreenConfiguration) {
