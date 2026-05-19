@@ -8,7 +8,8 @@ public class FeatureOption {
         AIDL_USERS,
         ROOM_USERS,
         AIDL_ROOM_USERS,
-        MUSIC_PLAYER
+        MUSIC_PLAYER,
+        MEDIA_SESSION_PREVIEW
     }
 
     private final Destination destination;

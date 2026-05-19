@@ -12,31 +12,37 @@ import android.widget.SeekBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.session.MediaController;
+import androidx.media3.session.MediaSession;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentMusicPlayerBinding;
+import com.example.myapplication.databinding.FragmentMediaSessionPreviewBinding;
 import com.example.myapplication.presentation.media.SongAssetLoader;
 import com.example.myapplication.presentation.model.SongItem;
 import com.example.myapplication.presentation.ui.adapter.SongAdapter;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
-public class MusicPlayerFragment extends Fragment {
+public class MediaSessionPreviewFragment extends Fragment {
 
-    public static final String TAG = "MusicPlayerFragment";
-
+    public static final String TAG = "MediaSessionPreviewFragment";
+    private static final String SESSION_ID = "media-session-preview";
     private static final long PROGRESS_UPDATE_INTERVAL_MS = 500L;
 
     private final Handler progressHandler = new Handler(Looper.getMainLooper());
@@ -47,6 +53,7 @@ public class MusicPlayerFragment extends Fragment {
         @Override
         public void run() {
             updateProgressUi();
+            updateSessionPreviewUi();
             if (binding != null) {
                 progressHandler.postDelayed(this, PROGRESS_UPDATE_INTERVAL_MS);
             }
@@ -58,24 +65,47 @@ public class MusicPlayerFragment extends Fragment {
         public void onPlaybackStateChanged(int playbackState) {
             updateSongSelection();
             updatePlayerUi();
+            updateSessionPreviewUi();
         }
 
         @Override
         public void onIsPlayingChanged(boolean isPlaying) {
             updateSongSelection();
             updatePlayerUi();
+            updateSessionPreviewUi();
         }
 
         @Override
         public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
             updateSongSelection();
             updatePlayerUi();
+            updateSessionPreviewUi();
         }
     };
 
-    private FragmentMusicPlayerBinding binding;
+    private final Player.Listener controllerListener = new Player.Listener() {
+        @Override
+        public void onPlaybackStateChanged(int playbackState) {
+            updateSessionPreviewUi();
+        }
+
+        @Override
+        public void onMediaMetadataChanged(MediaMetadata mediaMetadata) {
+            updateSessionPreviewUi();
+        }
+
+        @Override
+        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+            updateSessionPreviewUi();
+        }
+    };
+
+    private FragmentMediaSessionPreviewBinding binding;
     private ScreenConfigurationHost screenConfigurationHost;
     private ExoPlayer player;
+    private MediaSession mediaSession;
+    private ListenableFuture<MediaController> controllerFuture;
+    private MediaController sessionController;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -92,7 +122,7 @@ public class MusicPlayerFragment extends Fragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-        binding = FragmentMusicPlayerBinding.inflate(inflater, container, false);
+        binding = FragmentMediaSessionPreviewBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -108,16 +138,17 @@ public class MusicPlayerFragment extends Fragment {
         binding.buttonPrevious.setOnClickListener(v -> playPrevious());
         binding.buttonNext.setOnClickListener(v -> playNext());
 
+        binding.textSessionIdValue.setText(R.string.session_id_value);
+
         songs.clear();
         songs.addAll(SongAssetLoader.loadSongs(requireContext()));
         songAdapter.submitList(songs);
-        binding.textEmptySongs.setVisibility(songs.isEmpty() ? View.VISIBLE : View.GONE);
-        binding.recyclerSongs.setVisibility(songs.isEmpty() ? View.GONE : View.VISIBLE);
 
         if (!songs.isEmpty()) {
-            initializePlayer();
+            initializePlayerAndSession();
         } else {
             updatePlayerUi();
+            updateSessionPreviewUi();
         }
     }
 
@@ -127,7 +158,7 @@ public class MusicPlayerFragment extends Fragment {
         if (screenConfigurationHost != null) {
             screenConfigurationHost.updateScreenConfiguration(
                     new ScreenConfiguration(
-                            R.string.title_music_player,
+                            R.string.title_media_session_preview,
                             true,
                             false,
                             false
@@ -141,13 +172,14 @@ public class MusicPlayerFragment extends Fragment {
         if (player != null && player.isPlaying()) {
             player.pause();
             updatePlayerUi();
+            updateSessionPreviewUi();
         }
         super.onStop();
     }
 
     @Override
     public void onDestroyView() {
-        releasePlayer();
+        releaseResources();
         if (binding != null) {
             binding.recyclerSongs.setAdapter(null);
             binding = null;
@@ -162,7 +194,7 @@ public class MusicPlayerFragment extends Fragment {
     }
 
     @OptIn(markerClass = UnstableApi.class)
-    private void initializePlayer() {
+    private void initializePlayerAndSession() {
         if (player != null) {
             return;
         }
@@ -178,12 +210,37 @@ public class MusicPlayerFragment extends Fragment {
         for (SongItem song : songs) {
             mediaItems.add(song.toMediaItem());
         }
-
         player.setMediaItems(mediaItems, 0, 0L);
         player.prepare();
+
+        mediaSession = new MediaSession.Builder(requireContext(), player)
+                .setId(SESSION_ID)
+                .build();
+
+        controllerFuture = new MediaController.Builder(requireContext(), mediaSession.getToken())
+                .buildAsync();
+        controllerFuture.addListener(this::attachControllerWhenReady, ContextCompat.getMainExecutor(requireContext()));
+
         progressHandler.post(progressRunnable);
         updateSongSelection();
         updatePlayerUi();
+        updateSessionPreviewUi();
+    }
+
+    private void attachControllerWhenReady() {
+        if (!isAdded() || controllerFuture == null) {
+            return;
+        }
+
+        try {
+            sessionController = controllerFuture.get();
+            sessionController.addListener(controllerListener);
+        } catch (ExecutionException | InterruptedException exception) {
+            if (exception instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        updateSessionPreviewUi();
     }
 
     private void playSongAt(int position) {
@@ -198,6 +255,7 @@ public class MusicPlayerFragment extends Fragment {
         player.play();
         updateSongSelection();
         updatePlayerUi();
+        updateSessionPreviewUi();
     }
 
     private void playCurrentSelection() {
@@ -219,6 +277,7 @@ public class MusicPlayerFragment extends Fragment {
         player.play();
         updateSongSelection();
         updatePlayerUi();
+        updateSessionPreviewUi();
     }
 
     private void pausePlayback() {
@@ -228,6 +287,7 @@ public class MusicPlayerFragment extends Fragment {
         player.pause();
         updateSongSelection();
         updatePlayerUi();
+        updateSessionPreviewUi();
     }
 
     private void stopPlayback() {
@@ -237,6 +297,7 @@ public class MusicPlayerFragment extends Fragment {
         player.stop();
         updateSongSelection();
         updatePlayerUi();
+        updateSessionPreviewUi();
     }
 
     private void playPrevious() {
@@ -250,8 +311,7 @@ public class MusicPlayerFragment extends Fragment {
             return;
         }
 
-        int previousSongIndex = Math.max(currentSongIndex - 1, 0);
-        playSongAt(previousSongIndex);
+        playSongAt(Math.max(currentSongIndex - 1, 0));
     }
 
     private void playNext() {
@@ -265,8 +325,7 @@ public class MusicPlayerFragment extends Fragment {
             return;
         }
 
-        int nextSongIndex = Math.min(currentSongIndex + 1, songs.size() - 1);
-        playSongAt(nextSongIndex);
+        playSongAt(Math.min(currentSongIndex + 1, songs.size() - 1));
     }
 
     private void updatePlayerUi() {
@@ -297,6 +356,47 @@ public class MusicPlayerFragment extends Fragment {
 
         binding.textDurationValue.setText(formatDuration(currentDuration));
         updateProgressUi();
+    }
+
+    private void updateSessionPreviewUi() {
+        if (binding == null) {
+            return;
+        }
+
+        boolean isControllerConnected = sessionController != null && sessionController.isConnected();
+        boolean isSessionActive = mediaSession != null && isControllerConnected;
+        binding.textSessionActiveValue.setText(
+                isSessionActive ? R.string.status_active : R.string.status_inactive
+        );
+        binding.textControllerConnectedValue.setText(
+                isControllerConnected ? R.string.status_connected : R.string.status_disconnected
+        );
+
+        int connectedControllerCount = mediaSession == null
+                ? 0
+                : mediaSession.getConnectedControllers().size();
+        binding.textConnectedControllersValue.setText(String.valueOf(connectedControllerCount));
+
+        MediaMetadata sessionMetadata = sessionController == null
+                ? MediaMetadata.EMPTY
+                : sessionController.getMediaMetadata();
+        CharSequence title = sessionMetadata.title;
+        CharSequence artist = sessionMetadata.artist;
+        long durationMs = sessionController == null
+                ? resolveCurrentSongDuration(getCurrentSong())
+                : resolveControllerDuration();
+
+        binding.textSessionMetadataTitleValue.setText(
+                title == null || title.length() == 0
+                        ? getString(R.string.label_not_available)
+                        : title
+        );
+        binding.textSessionMetadataArtistValue.setText(
+                artist == null || artist.length() == 0
+                        ? getString(R.string.label_unknown_artist)
+                        : artist
+        );
+        binding.textSessionMetadataDurationValue.setText(formatDuration(durationMs));
     }
 
     private void updateSongSelection() {
@@ -356,6 +456,18 @@ public class MusicPlayerFragment extends Fragment {
         return durationMs;
     }
 
+    private long resolveControllerDuration() {
+        if (sessionController == null) {
+            return 0L;
+        }
+
+        long durationMs = sessionController.getDuration();
+        if (durationMs == C.TIME_UNSET || durationMs < 0L) {
+            return resolveCurrentSongDuration(getCurrentSong());
+        }
+        return durationMs;
+    }
+
     private SeekBar.OnSeekBarChangeListener createSeekBarListener() {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -379,6 +491,7 @@ public class MusicPlayerFragment extends Fragment {
                 }
                 player.seekTo(seekBar.getProgress());
                 updateProgressUi();
+                updateSessionPreviewUi();
             }
         };
     }
@@ -394,8 +507,23 @@ public class MusicPlayerFragment extends Fragment {
         return String.format(Locale.US, "%02d:%02d", minutes, seconds);
     }
 
-    private void releasePlayer() {
+    private void releaseResources() {
         progressHandler.removeCallbacks(progressRunnable);
+
+        if (sessionController != null) {
+            sessionController.removeListener(controllerListener);
+            sessionController.release();
+            sessionController = null;
+        } else if (controllerFuture != null) {
+            MediaController.releaseFuture(controllerFuture);
+        }
+        controllerFuture = null;
+
+        if (mediaSession != null) {
+            mediaSession.release();
+            mediaSession = null;
+        }
+
         if (player != null) {
             player.removeListener(playerListener);
             player.release();

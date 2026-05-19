@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
