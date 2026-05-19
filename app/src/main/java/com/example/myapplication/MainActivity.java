@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.presentation.ui.AidlUserListFragment;
 import com.example.myapplication.presentation.ui.BackgroundPlaybackFragment;
+import com.example.myapplication.presentation.ui.MediaControllerUiFragment;
 import com.example.myapplication.presentation.ui.MediaSessionPreviewFragment;
 import com.example.myapplication.presentation.ui.NotificationLockscreenFragment;
 import com.example.myapplication.presentation.ui.MusicPlayerFragment;
@@ -140,6 +141,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void openNotificationLockscreen() {
         navigateTo(new NotificationLockscreenFragment(), NotificationLockscreenFragment.TAG);
+    }
+
+    @Override
+    public void openMediaControllerUi() {
+        navigateTo(new MediaControllerUiFragment(), MediaControllerUiFragment.TAG);
     }
 
     @Override

@@ -8,8 +8,9 @@
     <string name="title_media_session_preview">ExoPlayer + MediaSession</string>
     <string name="title_background_playback">Background Playback</string>
     <string name="title_notification_lockscreen">Media Notification + Lockscreen</string>
+    <string name="title_media_controller_ui">MediaController UI</string>
     <string name="source_picker_title">Chon chuc nang can xem</string>
-    <string name="source_picker_message">3 muc dau demo cac cach doc danh sach user. Cac muc con lai demo ExoPlayer co ban, ket noi MediaSession, background playback bang MediaSessionService va media notification tren lockscreen.</string>
+    <string name="source_picker_message">3 muc dau demo cac cach doc danh sach user. Cac muc con lai demo ExoPlayer co ban, ket noi MediaSession, background playback bang MediaSessionService, media notification tren lockscreen va UI dieu khien bang MediaController.</string>
     <string name="source_option_aidl_title">Doc user bang AIDL service</string>
     <string name="source_option_aidl_message">Doc danh sach user tu service AIDL chay o process rieng.</string>
     <string name="source_option_room_title">Doc user bang Room database</string>
@@ -24,6 +25,8 @@
     <string name="feature_option_background_playback_message">ExoPlayer va MediaSession chay trong MediaSessionService, UI dieu khien qua MediaController va nhac tiep tuc khi app ra nen.</string>
     <string name="feature_option_notification_title">Media Notification va Lockscreen</string>
     <string name="feature_option_notification_message">Notification he thong tu hien khi playback, co play pause next previous, hien thi title artist artwork va lockscreen controls.</string>
+    <string name="feature_option_controller_ui_title">MediaController UI</string>
+    <string name="feature_option_controller_ui_message">UI doc state tu MediaController, gui lenh play pause next previous va observe metadata cung playback state.</string>
     <string name="action_add_user">Them user</string>
     <string name="action_read_users">Lam moi</string>
     <string name="action_retry_connection">Thu ket noi lai</string>
@@ -74,6 +77,8 @@
     <string name="background_playback_hint">Hay nhan Play roi bam Home hoac doi sang app khac de xem nhac co tiep tuc phat khong.</string>
     <string name="notification_lockscreen_message">Man hinh nay dung chung PlaybackService nhung tap trung vao metadata va media controls tren notification va lockscreen. Khi bai hat duoc phat, Media3 se tu dong dang notification dua tren MediaSession.</string>
     <string name="notification_lockscreen_hint">Sau khi nhan Play, keo notification shade hoac khoa man hinh de thu cac nut play pause next previous.</string>
+    <string name="media_controller_ui_message">Man hinh nay khong giu ExoPlayer trong UI. Fragment ket noi toi PlaybackService bang MediaController, doc state tu controller va gui lenh dieu khien qua controller.</string>
+    <string name="media_controller_ui_hint">Hay thu chon bai hat, nhan cac nut play pause next previous va quan sat metadata cung playback state cap nhat theo controller.</string>
     <string name="label_now_playing">Now playing</string>
     <string name="label_current_position">Current</string>
     <string name="label_duration">Duration</string>
@@ -93,6 +98,12 @@
     <string name="label_notification_title">Notification title</string>
     <string name="label_notification_artist">Notification artist</string>
     <string name="label_notification_artwork">Notification artwork</string>
+    <string name="label_media_controller_state">Controller state</string>
+    <string name="label_controller_metadata_title">Observed title</string>
+    <string name="label_controller_metadata_artist">Observed artist</string>
+    <string name="label_playback_state">Playback state</string>
+    <string name="label_play_when_ready">PlayWhenReady</string>
+    <string name="label_is_playing">Is playing</string>
     <string name="status_playlist_ready">Ready in service</string>
     <string name="status_playlist_empty">Not loaded yet</string>
     <string name="status_notification_ready">Will show while playback is active</string>
@@ -102,6 +113,13 @@
     <string name="status_inactive">Inactive</string>
     <string name="status_connected">Connected</string>
     <string name="status_disconnected">Disconnected</string>
+    <string name="status_true">true</string>
+    <string name="status_false">false</string>
+    <string name="playback_state_idle">Idle</string>
+    <string name="playback_state_buffering">Buffering</string>
+    <string name="playback_state_ready">Ready</string>
+    <string name="playback_state_ended">Ended</string>
+    <string name="playback_state_unknown">Unknown</string>
     <string name="session_id_value">media-session-preview</string>
     <string name="song_status_selected">Da chon</string>
     <string name="song_status_playing">Dang phat</string>

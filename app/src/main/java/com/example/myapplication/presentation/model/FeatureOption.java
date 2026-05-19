@@ -11,7 +11,8 @@ public class FeatureOption {
         MUSIC_PLAYER,
         MEDIA_SESSION_PREVIEW,
         BACKGROUND_PLAYBACK,
-        MEDIA_NOTIFICATION_LOCKSCREEN
+        MEDIA_NOTIFICATION_LOCKSCREEN,
+        MEDIA_CONTROLLER_UI
     }
 
     private final Destination destination;
