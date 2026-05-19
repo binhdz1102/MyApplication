@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.presentation.ui.AidlUserListFragment;
+import com.example.myapplication.presentation.ui.MusicPlayerFragment;
 import com.example.myapplication.presentation.ui.RoomUserListFragment;
 import com.example.myapplication.presentation.ui.ScreenConfiguration;
 import com.example.myapplication.presentation.ui.ScreenConfigurationHost;
@@ -116,6 +117,11 @@ public class MainActivity extends AppCompatActivity
                 AidlUserListFragment.newAidlRoomDatabaseFragment(),
                 AidlUserListFragment.TAG_AIDL_ROOM
         );
+    }
+
+    @Override
+    public void openBasicMusicPlayer() {
+        navigateTo(new MusicPlayerFragment(), MusicPlayerFragment.TAG);
     }
 
     @Override
