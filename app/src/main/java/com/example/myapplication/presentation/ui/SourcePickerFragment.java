@@ -33,6 +33,8 @@ public class SourcePickerFragment extends Fragment {
         void openBasicMusicPlayer();
 
         void openMediaSessionPreview();
+
+        void openBackgroundPlayback();
     }
 
     private FragmentSourcePickerBinding binding;
@@ -129,6 +131,11 @@ public class SourcePickerFragment extends Fragment {
                 R.string.feature_option_media_session_title,
                 R.string.feature_option_media_session_message
         ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.BACKGROUND_PLAYBACK,
+                R.string.feature_option_background_playback_title,
+                R.string.feature_option_background_playback_message
+        ));
         return options;
     }
 
@@ -148,6 +155,8 @@ public class SourcePickerFragment extends Fragment {
             navigator.openBasicMusicPlayer();
         } else if (destination == FeatureOption.Destination.MEDIA_SESSION_PREVIEW) {
             navigator.openMediaSessionPreview();
+        } else if (destination == FeatureOption.Destination.BACKGROUND_PLAYBACK) {
+            navigator.openBackgroundPlayback();
         }
     }
 }

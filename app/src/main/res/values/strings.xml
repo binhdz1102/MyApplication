@@ -6,8 +6,9 @@
     <string name="title_aidl_room_users">Danh sach user - AIDL + Room</string>
     <string name="title_music_player">ExoPlayer co ban</string>
     <string name="title_media_session_preview">ExoPlayer + MediaSession</string>
+    <string name="title_background_playback">Background Playback</string>
     <string name="source_picker_title">Chon chuc nang can xem</string>
-    <string name="source_picker_message">3 muc dau demo cac cach doc danh sach user. 2 muc cuoi demo ExoPlayer co ban va cach noi ExoPlayer voi MediaSession.</string>
+    <string name="source_picker_message">3 muc dau demo cac cach doc danh sach user. Cac muc con lai demo ExoPlayer co ban, ket noi MediaSession va background playback bang MediaSessionService.</string>
     <string name="source_option_aidl_title">Doc user bang AIDL service</string>
     <string name="source_option_aidl_message">Doc danh sach user tu service AIDL chay o process rieng.</string>
     <string name="source_option_room_title">Doc user bang Room database</string>
@@ -18,6 +19,8 @@
     <string name="feature_option_music_message">Hien thi bai hat tu assets va thao tac play, pause, stop, seek, next, previous.</string>
     <string name="feature_option_media_session_title">Preview ExoPlayer + MediaSession</string>
     <string name="feature_option_media_session_message">Tao MediaSession, gan voi ExoPlayer, cap nhat metadata va kiem tra session active qua controller.</string>
+    <string name="feature_option_background_playback_title">Background Playback bang Service</string>
+    <string name="feature_option_background_playback_message">ExoPlayer va MediaSession chay trong MediaSessionService, UI dieu khien qua MediaController va nhac tiep tuc khi app ra nen.</string>
     <string name="action_add_user">Them user</string>
     <string name="action_read_users">Lam moi</string>
     <string name="action_retry_connection">Thu ket noi lai</string>
@@ -64,6 +67,8 @@
     <string name="music_player_message">Danh sach bai hat duoc doc tu assets. Nhan vao mot bai hat de phat, sau do dieu khien player o khung ben duoi.</string>
     <string name="music_player_empty_songs">Khong tim thay bai hat nao trong thu muc assets.</string>
     <string name="media_session_preview_message">Man hinh nay tao MediaSession gan truc tiep voi ExoPlayer. Metadata cua bai hat duoc dong bo qua MediaSession va duoc preview bang MediaController trong cung app.</string>
+    <string name="background_playback_message">Man hinh nay ket noi toi PlaybackService bang MediaController. ExoPlayer va MediaSession duoc tao trong service de nhac tiep tuc phat khi app ra nen.</string>
+    <string name="background_playback_hint">Hay nhan Play roi bam Home hoac doi sang app khac de xem nhac co tiep tuc phat khong.</string>
     <string name="label_now_playing">Now playing</string>
     <string name="label_current_position">Current</string>
     <string name="label_duration">Duration</string>
@@ -77,6 +82,10 @@
     <string name="label_session_metadata_title">Metadata title</string>
     <string name="label_session_metadata_artist">Metadata artist</string>
     <string name="label_session_metadata_duration">Metadata duration</string>
+    <string name="label_controller_status">Controller status</string>
+    <string name="label_playlist_status">Playlist status</string>
+    <string name="status_playlist_ready">Ready in service</string>
+    <string name="status_playlist_empty">Not loaded yet</string>
     <string name="status_active">Active</string>
     <string name="status_inactive">Inactive</string>
     <string name="status_connected">Connected</string>

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.presentation.ui.AidlUserListFragment;
+import com.example.myapplication.presentation.ui.BackgroundPlaybackFragment;
 import com.example.myapplication.presentation.ui.MediaSessionPreviewFragment;
 import com.example.myapplication.presentation.ui.MusicPlayerFragment;
 import com.example.myapplication.presentation.ui.RoomUserListFragment;
@@ -128,6 +129,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void openMediaSessionPreview() {
         navigateTo(new MediaSessionPreviewFragment(), MediaSessionPreviewFragment.TAG);
+    }
+
+    @Override
+    public void openBackgroundPlayback() {
+        navigateTo(new BackgroundPlaybackFragment(), BackgroundPlaybackFragment.TAG);
     }
 
     @Override
