@@ -35,6 +35,8 @@ public class SourcePickerFragment extends Fragment {
         void openMediaSessionPreview();
 
         void openBackgroundPlayback();
+
+        void openNotificationLockscreen();
     }
 
     private FragmentSourcePickerBinding binding;
@@ -136,6 +138,11 @@ public class SourcePickerFragment extends Fragment {
                 R.string.feature_option_background_playback_title,
                 R.string.feature_option_background_playback_message
         ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.MEDIA_NOTIFICATION_LOCKSCREEN,
+                R.string.feature_option_notification_title,
+                R.string.feature_option_notification_message
+        ));
         return options;
     }
 
@@ -157,6 +164,8 @@ public class SourcePickerFragment extends Fragment {
             navigator.openMediaSessionPreview();
         } else if (destination == FeatureOption.Destination.BACKGROUND_PLAYBACK) {
             navigator.openBackgroundPlayback();
+        } else if (destination == FeatureOption.Destination.MEDIA_NOTIFICATION_LOCKSCREEN) {
+            navigator.openNotificationLockscreen();
         }
     }
 }

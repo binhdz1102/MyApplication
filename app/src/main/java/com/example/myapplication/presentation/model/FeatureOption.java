@@ -10,7 +10,8 @@ public class FeatureOption {
         AIDL_ROOM_USERS,
         MUSIC_PLAYER,
         MEDIA_SESSION_PREVIEW,
-        BACKGROUND_PLAYBACK
+        BACKGROUND_PLAYBACK,
+        MEDIA_NOTIFICATION_LOCKSCREEN
     }
 
     private final Destination destination;

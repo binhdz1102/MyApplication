@@ -1,8 +1,10 @@
 package com.example.myapplication.presentation.media;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -70,14 +72,21 @@ public final class SongAssetLoader {
             long durationMs = parseDuration(
                     retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
             );
-            return new SongItem(assetName, title, artist, durationMs);
+            return new SongItem(
+                    assetName,
+                    title,
+                    artist,
+                    durationMs,
+                    buildArtworkUri(context, assetName)
+            );
         } catch (IOException | RuntimeException exception) {
             Log.w(LOG_TAG, "Unable to read metadata for asset: " + assetName, exception);
             return new SongItem(
                     assetName,
                     formatAssetName(assetName),
                     context.getString(R.string.label_unknown_artist),
-                    0L
+                    0L,
+                    buildArtworkUri(context, assetName)
             );
         } finally {
             try {
@@ -136,5 +145,19 @@ public final class SongAssetLoader {
             }
         }
         return builder.length() == 0 ? assetName : builder.toString();
+    }
+
+    @NonNull
+    private static String buildArtworkUri(@NonNull Context context, @NonNull String assetName) {
+        String resourceName = assetName.hashCode() % 2 == 0
+                ? "ic_launcher"
+                : "ic_launcher_round";
+        Uri uri = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(context.getPackageName())
+                .appendPath("mipmap")
+                .appendPath(resourceName)
+                .build();
+        return uri.toString();
     }
 }

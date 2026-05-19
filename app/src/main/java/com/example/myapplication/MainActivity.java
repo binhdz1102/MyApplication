@@ -16,6 +16,7 @@ import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.presentation.ui.AidlUserListFragment;
 import com.example.myapplication.presentation.ui.BackgroundPlaybackFragment;
 import com.example.myapplication.presentation.ui.MediaSessionPreviewFragment;
+import com.example.myapplication.presentation.ui.NotificationLockscreenFragment;
 import com.example.myapplication.presentation.ui.MusicPlayerFragment;
 import com.example.myapplication.presentation.ui.RoomUserListFragment;
 import com.example.myapplication.presentation.ui.ScreenConfiguration;
@@ -134,6 +135,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void openBackgroundPlayback() {
         navigateTo(new BackgroundPlaybackFragment(), BackgroundPlaybackFragment.TAG);
+    }
+
+    @Override
+    public void openNotificationLockscreen() {
+        navigateTo(new NotificationLockscreenFragment(), NotificationLockscreenFragment.TAG);
     }
 
     @Override
