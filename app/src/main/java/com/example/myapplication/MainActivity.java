@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.presentation.ui.AidlUserListFragment;
 import com.example.myapplication.presentation.ui.BackgroundPlaybackFragment;
+import com.example.myapplication.presentation.ui.BluetoothUseCasesFragment;
 import com.example.myapplication.presentation.ui.MediaControllerUiFragment;
 import com.example.myapplication.presentation.ui.MediaSessionPreviewFragment;
 import com.example.myapplication.presentation.ui.NotificationLockscreenFragment;
@@ -26,7 +27,7 @@ import com.example.myapplication.presentation.ui.SourcePickerFragment;
 import com.example.myapplication.presentation.ui.UserActionHandler;
 
 public class MainActivity extends AppCompatActivity
-        implements SourcePickerFragment.Navigator, ScreenConfigurationHost {
+        implements SourcePickerFragment.Navigator, BluetoothUseCasesFragment.Navigator, ScreenConfigurationHost {
 
     private ActivityMainBinding binding;
     private ScreenConfiguration currentScreenConfiguration = new ScreenConfiguration(
@@ -146,6 +147,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void openMediaControllerUi() {
         navigateTo(new MediaControllerUiFragment(), MediaControllerUiFragment.TAG);
+    }
+
+    @Override
+    public void openBluetoothUseCases() {
+        navigateTo(new BluetoothUseCasesFragment(), BluetoothUseCasesFragment.TAG);
     }
 
     @Override

@@ -39,6 +39,8 @@ public class SourcePickerFragment extends Fragment {
         void openNotificationLockscreen();
 
         void openMediaControllerUi();
+
+        void openBluetoothUseCases();
     }
 
     private FragmentSourcePickerBinding binding;
@@ -150,6 +152,11 @@ public class SourcePickerFragment extends Fragment {
                 R.string.feature_option_controller_ui_title,
                 R.string.feature_option_controller_ui_message
         ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.BLUETOOTH_USE_CASES,
+                R.string.feature_option_bluetooth_title,
+                R.string.feature_option_bluetooth_message
+        ));
         return options;
     }
 
@@ -175,6 +182,8 @@ public class SourcePickerFragment extends Fragment {
             navigator.openNotificationLockscreen();
         } else if (destination == FeatureOption.Destination.MEDIA_CONTROLLER_UI) {
             navigator.openMediaControllerUi();
+        } else if (destination == FeatureOption.Destination.BLUETOOTH_USE_CASES) {
+            navigator.openBluetoothUseCases();
         }
     }
 }

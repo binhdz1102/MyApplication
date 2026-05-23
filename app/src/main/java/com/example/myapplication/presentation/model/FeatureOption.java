@@ -12,7 +12,8 @@ public class FeatureOption {
         MEDIA_SESSION_PREVIEW,
         BACKGROUND_PLAYBACK,
         MEDIA_NOTIFICATION_LOCKSCREEN,
-        MEDIA_CONTROLLER_UI
+        MEDIA_CONTROLLER_UI,
+        BLUETOOTH_USE_CASES
     }
 
     private final Destination destination;
