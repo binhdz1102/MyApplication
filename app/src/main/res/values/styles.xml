@@ -1,0 +1,46 @@
+<resources>
+    <style name="Widget.MyApplication.IconButton" parent="">
+        <item name="android:layout_width">@dimen/main_button_width</item>
+        <item name="android:layout_height">@dimen/main_button_height</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="Widget.MyApplication.PressableIconButton" parent="Widget.MyApplication.IconButton">
+        <item name="srcCompat">@drawable/button_icon_pressable</item>
+    </style>
+
+    <style name="Widget.MyApplication.SelectableIconButton" parent="Widget.MyApplication.IconButton">
+        <item name="srcCompat">@drawable/button_icon_selectable</item>
+    </style>
+
+    <style name="Widget.MyApplication.ValueDisplay" parent="">
+        <item name="android:layout_width">@dimen/main_button_width</item>
+        <item name="android:layout_height">@dimen/main_button_height</item>
+        <item name="android:background">@drawable/icon_button</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.MyApplication.PlainValueText" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">@dimen/main_button_width</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.MyApplication.StarIcon" parent="">
+        <item name="android:layout_width">@dimen/main_star_size</item>
+        <item name="android:layout_height">@dimen/main_star_size</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+</resources>

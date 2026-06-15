@@ -1,3 +1,12 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="main_button_height">32dp</dimen>
+    <dimen name="main_button_spacing">16dp</dimen>
+    <dimen name="main_button_width">64dp</dimen>
+    <dimen name="main_row_spacing">16dp</dimen>
+    <dimen name="main_screen_horizontal_padding">64dp</dimen>
+    <dimen name="main_screen_vertical_padding">32dp</dimen>
+    <dimen name="main_section_spacing">16dp</dimen>
+    <dimen name="main_star_size">24dp</dimen>
+    <dimen name="main_star_spacing">8dp</dimen>
 </resources>

@@ -1,33 +1,20 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.view.Menu
-import android.view.MenuItem
+import androidx.core.view.updatePadding
 import com.example.myapplication.databinding.ActivityMainBinding
-import com.example.myapplication.di.AppContainer
-import com.example.myapplication.domain.model.User
-import com.example.myapplication.presentation.model.ServiceConnectionUiState
-import com.example.myapplication.presentation.ui.ServiceStatusFragment
-import com.example.myapplication.presentation.ui.UserListFragment
-import com.example.myapplication.presentation.ui.dialog.DeleteUserDialogFragment
-import com.example.myapplication.presentation.ui.dialog.UserFormDialogFragment
-import com.example.myapplication.presentation.viewmodel.UserViewModel
-import com.google.android.material.snackbar.Snackbar
 
-class MainActivity : AppCompatActivity(), UserListFragment.UserItemListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    private val viewModel: UserViewModel by viewModels {
-        AppContainer.provideUserViewModelFactory(applicationContext)
-    }
-
-    private var currentServiceState: ServiceConnectionUiState = ServiceConnectionUiState.CONNECTING
+    private var currentX = 10
+    private var currentRating = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,136 +23,130 @@ class MainActivity : AppCompatActivity(), UserListFragment.UserItemListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+        applyWindowInsets()
+        setupButtons()
+    }
+
+    private fun applyWindowInsets() {
+        val initialLeft = binding.main.paddingLeft
+        val initialTop = binding.main.paddingTop
+        val initialRight = binding.main.paddingRight
+        val initialBottom = binding.main.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            view.updatePadding(
+                left = initialLeft + systemBars.left,
+                top = initialTop + systemBars.top,
+                right = initialRight + systemBars.right,
+                bottom = initialBottom + systemBars.bottom,
+            )
             insets
         }
-        setSupportActionBar(binding.toolbar)
 
-        binding.fab.setOnClickListener {
-            UserFormDialogFragment.newAddDialog()
-                .show(supportFragmentManager, UserFormDialogFragment.TAG)
+        ViewCompat.requestApplyInsets(binding.main)
+    }
+
+    private fun setupButtons() {
+        bindLogButton(binding.buttonA11, "Area A - row 1 - button 1")
+        bindLogButton(binding.buttonA12, "Area A - row 1 - button 2")
+        bindLogButton(binding.buttonA13, "Area A - row 1 - button 3")
+        setupRatingControls()
+        bindDecreaseButton()
+        updateXValue()
+        bindIncreaseButton()
+        bindLogButton(binding.buttonB1, "Area B - button 1")
+        bindLogButton(binding.buttonB2, "Area B - button 2")
+        bindLogButton(binding.buttonB3, "Area B - button 3")
+        bindSelectableCenterButton(binding.buttonB4)
+        bindLogButton(binding.buttonB5, "Area B - button 5")
+        bindLogButton(binding.buttonB6, "Area B - button 6")
+        bindLogButton(binding.buttonB7, "Area B - button 7")
+    }
+
+    private fun bindLogButton(button: View, description: String) {
+        button.contentDescription = description
+        button.setOnClickListener {
+            Log.d(TAG, "$description clicked")
         }
-
-        registerDialogResults()
-        viewModel.connectService()
-
-        observeViewModel()
-
-        if (savedInstanceState == null) {
-            showFragment(ServiceConnectionUiState.CONNECTING)
-        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.findItem(R.id.action_refresh_users)?.isVisible =
-            currentServiceState == ServiceConnectionUiState.CONNECTED
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_refresh_users -> {
-                viewModel.loadUsers()
-                true
+    private fun setupRatingControls() {
+        binding.buttonA21.contentDescription = "Area A - decrease rating"
+        binding.buttonA21.setOnClickListener {
+            if (currentRating > 0) {
+                currentRating -= 1
+                updateRatingStars()
             }
+            Log.d(TAG, "Area A - decrease rating clicked, rating=$currentRating")
+        }
 
-            else -> super.onOptionsItemSelected(item)
+        binding.buttonA23.contentDescription = "Area A - increase rating"
+        binding.buttonA23.setOnClickListener {
+            if (currentRating < MAX_RATING) {
+                currentRating += 1
+                updateRatingStars()
+            }
+            Log.d(TAG, "Area A - increase rating clicked, rating=$currentRating")
+        }
+
+        updateRatingStars()
+    }
+
+    private fun bindDecreaseButton() {
+        binding.buttonA31.contentDescription = "Area A - decrease X"
+        binding.buttonA31.setOnClickListener {
+            currentX -= 1
+            updateXValue()
+            Log.d(TAG, "Area A - decrease X clicked, X=$currentX")
         }
     }
 
-    override fun onUserClicked(user: User) {
-        UserFormDialogFragment.newEditDialog(user)
-            .show(supportFragmentManager, UserFormDialogFragment.TAG)
+    private fun bindIncreaseButton() {
+        binding.buttonA33.contentDescription = "Area A - increase X"
+        binding.buttonA33.setOnClickListener {
+            currentX += 1
+            updateXValue()
+            Log.d(TAG, "Area A - increase X clicked, X=$currentX")
+        }
     }
 
-    override fun onUserLongClicked(user: User) {
-        DeleteUserDialogFragment.newInstance(user.id, user.name)
-            .show(supportFragmentManager, DeleteUserDialogFragment.TAG)
+    private fun updateXValue() {
+        binding.valueA32.text = currentX.toString()
+        binding.valueA32.contentDescription = "Area A - X value $currentX"
     }
 
-    private fun registerDialogResults() {
-        supportFragmentManager.setFragmentResultListener(
-            UserFormDialogFragment.REQUEST_KEY,
-            this,
-        ) { _, bundle ->
-            val user = User(
-                id = bundle.getLong(UserFormDialogFragment.RESULT_USER_ID),
-                name = bundle.getString(UserFormDialogFragment.RESULT_USER_NAME).orEmpty(),
-                age = bundle.getInt(UserFormDialogFragment.RESULT_USER_AGE),
-                weight = bundle.getFloat(UserFormDialogFragment.RESULT_USER_WEIGHT),
-            )
+    private fun updateRatingStars() {
+        val starViews = listOf(
+            binding.star1,
+            binding.star2,
+            binding.star3,
+            binding.star4,
+            binding.star5,
+        )
 
-            if (bundle.getBoolean(UserFormDialogFragment.RESULT_IS_EDIT_MODE)) {
-                viewModel.updateUser(user)
+        starViews.forEachIndexed { index, imageView ->
+            val iconRes = if (index < currentRating) {
+                R.drawable.icon_solid_star
             } else {
-                viewModel.addUser(user)
+                R.drawable.icon_empty_star
             }
-        }
-
-        supportFragmentManager.setFragmentResultListener(
-            DeleteUserDialogFragment.REQUEST_KEY,
-            this,
-        ) { _, bundle ->
-            viewModel.deleteUser(bundle.getLong(DeleteUserDialogFragment.RESULT_USER_ID))
+            imageView.setImageResource(iconRes)
+            imageView.contentDescription = "Area A - star ${index + 1} ${if (index < currentRating) "filled" else "empty"}"
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.serviceConnectionState.observe(this) { state ->
-            currentServiceState = state
-            showFragment(state)
-            binding.toolbar.subtitle = when (state) {
-                ServiceConnectionUiState.CONNECTING -> getString(R.string.service_connecting_subtitle)
-                ServiceConnectionUiState.CONNECTED -> getString(R.string.service_connected_subtitle)
-                ServiceConnectionUiState.DISCONNECTED -> getString(R.string.service_disconnected_subtitle)
-            }
-            if (state == ServiceConnectionUiState.CONNECTED) {
-                binding.fab.show()
-            } else {
-                binding.fab.hide()
-            }
-            invalidateOptionsMenu()
-        }
-
-        viewModel.message.observe(this) { message ->
-            if (!message.isNullOrBlank()) {
-                val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
-                if (binding.fab.isShown) {
-                    snackbar.setAnchorView(binding.fab)
-                }
-                snackbar.show()
-                viewModel.consumeMessage()
-            }
+    private fun bindSelectableCenterButton(button: View) {
+        button.contentDescription = "Area B - center button"
+        button.isSelected = true
+        button.setOnClickListener {
+            it.isSelected = !it.isSelected
+            Log.d(TAG, "Area B - center button clicked, selected=${it.isSelected}")
         }
     }
 
-    private fun showFragment(state: ServiceConnectionUiState) {
-        val targetTag = if (state == ServiceConnectionUiState.CONNECTED) {
-            UserListFragment.TAG
-        } else {
-            ServiceStatusFragment.TAG
-        }
-
-        val currentTag = supportFragmentManager.findFragmentById(R.id.fragment_container)?.tag
-        if (currentTag == targetTag) {
-            return
-        }
-
-        val fragment = if (state == ServiceConnectionUiState.CONNECTED) {
-            UserListFragment()
-        } else {
-            ServiceStatusFragment()
-        }
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment, targetTag)
-            .commit()
+    companion object {
+        private const val TAG = "MainActivity"
+        private const val MAX_RATING = 5
     }
 }
