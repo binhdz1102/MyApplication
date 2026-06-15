@@ -4,17 +4,25 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.domain.model.ControlPanelState
+import com.example.myapplication.presentation.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+@AndroidEntryPoint(AppCompatActivity::class)
+class MainActivity : Hilt_MainActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var currentX = 10
-    private var currentRating = 5
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +32,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         applyWindowInsets()
-        setupButtons()
+        setupClickListeners()
+        observeState()
     }
 
     private fun applyWindowInsets() {
@@ -47,76 +56,74 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.requestApplyInsets(binding.main)
     }
 
-    private fun setupButtons() {
-        bindLogButton(binding.buttonA11, "Area A - row 1 - button 1")
-        bindLogButton(binding.buttonA12, "Area A - row 1 - button 2")
+    private fun setupClickListeners() {
+        binding.buttonA11.contentDescription = "Connect to AIDL service"
+        binding.buttonA11.setOnClickListener {
+            Log.d(TAG, "Area A - connect service clicked")
+            viewModel.connect()
+        }
+        binding.buttonA12.contentDescription = "Disconnect from AIDL service"
+        binding.buttonA12.setOnClickListener {
+            Log.d(TAG, "Area A - disconnect service clicked")
+            viewModel.disconnect()
+        }
         bindLogButton(binding.buttonA13, "Area A - row 1 - button 3")
-        setupRatingControls()
-        bindDecreaseButton()
-        updateXValue()
-        bindIncreaseButton()
         bindLogButton(binding.buttonB1, "Area B - button 1")
         bindLogButton(binding.buttonB2, "Area B - button 2")
         bindLogButton(binding.buttonB3, "Area B - button 3")
-        bindSelectableCenterButton(binding.buttonB4)
         bindLogButton(binding.buttonB5, "Area B - button 5")
         bindLogButton(binding.buttonB6, "Area B - button 6")
         bindLogButton(binding.buttonB7, "Area B - button 7")
-    }
 
-    private fun bindLogButton(button: View, description: String) {
-        button.contentDescription = description
-        button.setOnClickListener {
-            Log.d(TAG, "$description clicked")
-        }
-    }
-
-    private fun setupRatingControls() {
-        binding.buttonA21.contentDescription = "Area A - decrease rating"
         binding.buttonA21.setOnClickListener {
-            if (currentRating > 0) {
-                currentRating -= 1
-                updateRatingStars()
-            }
-            Log.d(TAG, "Area A - decrease rating clicked, rating=$currentRating")
+            Log.d(TAG, "Area A - decrease rating clicked")
+            viewModel.decreaseRating()
         }
 
-        binding.buttonA23.contentDescription = "Area A - increase rating"
         binding.buttonA23.setOnClickListener {
-            if (currentRating < MAX_RATING) {
-                currentRating += 1
-                updateRatingStars()
-            }
-            Log.d(TAG, "Area A - increase rating clicked, rating=$currentRating")
+            Log.d(TAG, "Area A - increase rating clicked")
+            viewModel.increaseRating()
         }
 
-        updateRatingStars()
-    }
-
-    private fun bindDecreaseButton() {
-        binding.buttonA31.contentDescription = "Area A - decrease X"
         binding.buttonA31.setOnClickListener {
-            currentX -= 1
-            updateXValue()
-            Log.d(TAG, "Area A - decrease X clicked, X=$currentX")
+            Log.d(TAG, "Area A - decrease temperature clicked")
+            viewModel.decreaseTemperature()
         }
-    }
 
-    private fun bindIncreaseButton() {
-        binding.buttonA33.contentDescription = "Area A - increase X"
         binding.buttonA33.setOnClickListener {
-            currentX += 1
-            updateXValue()
-            Log.d(TAG, "Area A - increase X clicked, X=$currentX")
+            Log.d(TAG, "Area A - increase temperature clicked")
+            viewModel.increaseTemperature()
+        }
+
+        binding.buttonB4.setOnClickListener {
+            Log.d(TAG, "Area B - center toggle clicked")
+            viewModel.toggleCenterButton()
         }
     }
 
-    private fun updateXValue() {
-        binding.valueA32.text = currentX.toString()
-        binding.valueA32.contentDescription = "Area A - X value $currentX"
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.controlState.collect(::render)
+            }
+        }
     }
 
-    private fun updateRatingStars() {
+    private fun render(state: ControlPanelState) {
+        renderRating(state.rating)
+        binding.valueA32.text = state.temperature.toString()
+        binding.valueA32.contentDescription = "Current temperature is ${state.temperature}"
+        binding.buttonB4.isSelected = state.toggledOn
+        binding.buttonB4.contentDescription = if (state.toggledOn) {
+            "Center toggle is on"
+        } else {
+            "Center toggle is off"
+        }
+
+        updateServiceControls(state.isServiceConnected)
+    }
+
+    private fun renderRating(rating: Int) {
         val starViews = listOf(
             binding.star1,
             binding.star2,
@@ -126,27 +133,46 @@ class MainActivity : AppCompatActivity() {
         )
 
         starViews.forEachIndexed { index, imageView ->
-            val iconRes = if (index < currentRating) {
-                R.drawable.icon_solid_star
-            } else {
-                R.drawable.icon_empty_star
-            }
-            imageView.setImageResource(iconRes)
-            imageView.contentDescription = "Area A - star ${index + 1} ${if (index < currentRating) "filled" else "empty"}"
+            val isFilled = index < rating
+            imageView.setImageResource(
+                if (isFilled) {
+                    R.drawable.icon_solid_star
+                } else {
+                    R.drawable.icon_empty_star
+                },
+            )
+            imageView.contentDescription = "Rating star ${index + 1} ${if (isFilled) "filled" else "empty"}"
         }
     }
 
-    private fun bindSelectableCenterButton(button: View) {
-        button.contentDescription = "Area B - center button"
-        button.isSelected = true
+    private fun updateServiceControls(isConnected: Boolean) {
+        val controlledViews = listOf<View>(
+            binding.buttonA21,
+            binding.buttonA23,
+            binding.buttonA31,
+            binding.buttonA33,
+            binding.buttonB4,
+        )
+
+        controlledViews.forEach { view ->
+            view.isEnabled = isConnected
+            view.alpha = if (isConnected) 1f else 0.5f
+        }
+        binding.buttonA11.isEnabled = true
+        binding.buttonA11.alpha = if (isConnected) 0.85f else 1f
+        binding.buttonA12.isEnabled = isConnected
+        binding.buttonA12.alpha = if (isConnected) 1f else 0.5f
+        binding.valueA32.alpha = if (isConnected) 1f else 0.7f
+    }
+
+    private fun bindLogButton(button: View, description: String) {
+        button.contentDescription = description
         button.setOnClickListener {
-            it.isSelected = !it.isSelected
-            Log.d(TAG, "Area B - center button clicked, selected=${it.isSelected}")
+            Log.d(TAG, "$description clicked")
         }
     }
 
     companion object {
         private const val TAG = "MainActivity"
-        private const val MAX_RATING = 5
     }
 }
