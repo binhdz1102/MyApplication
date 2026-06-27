@@ -12,7 +12,8 @@ public class FeatureOption {
         MEDIA_SESSION_PREVIEW,
         BACKGROUND_PLAYBACK,
         MEDIA_NOTIFICATION_LOCKSCREEN,
-        MEDIA_CONTROLLER_UI
+        MEDIA_CONTROLLER_UI,
+        CAR_PROPERTY_TEMPLATE
     }
 
     private final Destination destination;

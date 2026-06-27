@@ -1,0 +1,16 @@
+<resources>
+    <string name="car_property_template_summary">Template nay dung abstraction chung cho car property va demo voi HVAC_TEMPERATURE_SET / ROW_1_LEFT. Data layer goi android.car thong qua reflection de project van build tren SDK Android thuong. Tren Android Automotive, app can co quyen android.car.permission.CONTROL_CAR_CLIMATE moi doc/ghi duoc property nay.</string>
+    <string name="car_property_action_read_once">Read once</string>
+    <string name="car_property_action_start_observing">Start observing</string>
+    <string name="car_property_action_stop_observing">Stop observing</string>
+    <string name="car_property_action_set">Set temperature</string>
+    <string name="car_property_hint_set_temperature">Nhap nhiet do muc tieu (C)</string>
+    <string name="car_property_label_property">Property</string>
+    <string name="car_property_label_area">Area</string>
+    <string name="car_property_label_current_value">Current value</string>
+    <string name="car_property_label_status">Status</string>
+    <string name="car_property_label_timestamp">Timestamp (ns)</string>
+    <string name="car_property_label_property_id">Property ID</string>
+    <string name="car_property_label_area_id">Area ID</string>
+    <string name="car_property_label_last_action">Last action</string>
+</resources>

@@ -39,6 +39,8 @@ public class SourcePickerFragment extends Fragment {
         void openNotificationLockscreen();
 
         void openMediaControllerUi();
+
+        void openCarPropertyTemplate();
     }
 
     private FragmentSourcePickerBinding binding;
@@ -126,6 +128,11 @@ public class SourcePickerFragment extends Fragment {
                 R.string.source_option_aidl_room_message
         ));
         options.add(new FeatureOption(
+                FeatureOption.Destination.CAR_PROPERTY_TEMPLATE,
+                R.string.feature_option_car_property_title,
+                R.string.feature_option_car_property_message
+        ));
+        options.add(new FeatureOption(
                 FeatureOption.Destination.MUSIC_PLAYER,
                 R.string.feature_option_music_title,
                 R.string.feature_option_music_message
@@ -165,6 +172,8 @@ public class SourcePickerFragment extends Fragment {
             navigator.openRoomUsers();
         } else if (destination == FeatureOption.Destination.AIDL_ROOM_USERS) {
             navigator.openAidlRoomUsers();
+        } else if (destination == FeatureOption.Destination.CAR_PROPERTY_TEMPLATE) {
+            navigator.openCarPropertyTemplate();
         } else if (destination == FeatureOption.Destination.MUSIC_PLAYER) {
             navigator.openBasicMusicPlayer();
         } else if (destination == FeatureOption.Destination.MEDIA_SESSION_PREVIEW) {

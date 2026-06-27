@@ -6,6 +6,7 @@
 /compiler.xml
 /deploymentTargetSelector.xml
 /deviceManager.xml
+/emulatorDisplays.xml
 /gradle.xml
 /misc.xml
 /runConfigurations.xml

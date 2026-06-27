@@ -27,6 +27,9 @@
     <string name="feature_option_notification_message">Notification he thong tu hien khi playback, co play pause next previous, hien thi title artist artwork va lockscreen controls.</string>
     <string name="feature_option_controller_ui_title">MediaController UI</string>
     <string name="feature_option_controller_ui_message">UI doc state tu MediaController, gui lenh play pause next previous va observe metadata cung playback state.</string>
+    <string name="title_car_property_template">Car property HVAC template</string>
+    <string name="feature_option_car_property_title">Car property HVAC template</string>
+    <string name="feature_option_car_property_message">Template Kotlin cho HVAC_TEMPERATURE_SET / ROW_1_LEFT voi read once, observe va set bang coroutine, Flow, Hilt va MVVM clean architecture.</string>
     <string name="action_add_user">Them user</string>
     <string name="action_read_users">Lam moi</string>
     <string name="action_retry_connection">Thu ket noi lai</string>
@@ -124,3 +127,5 @@
     <string name="song_status_selected">Da chon</string>
     <string name="song_status_playing">Dang phat</string>
 </resources>
+
+
