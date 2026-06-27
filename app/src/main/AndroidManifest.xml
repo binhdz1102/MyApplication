@@ -16,6 +16,11 @@
             android:enabled="true"
             android:exported="false"
             android:process=":user_server" />
+        <service
+            android:name=".data.remote.service.UserAidlRoomService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":user_server_room" />
 
         <activity
             android:name=".MainActivity"
