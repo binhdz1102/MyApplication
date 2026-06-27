@@ -14,6 +14,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.presentation.ui.AidlUserListFragment;
+import com.example.myapplication.presentation.ui.BackgroundPlaybackFragment;
+import com.example.myapplication.presentation.ui.MediaControllerUiFragment;
+import com.example.myapplication.presentation.ui.MediaSessionPreviewFragment;
+import com.example.myapplication.presentation.ui.NotificationLockscreenFragment;
+import com.example.myapplication.presentation.ui.MusicPlayerFragment;
 import com.example.myapplication.presentation.ui.RoomUserListFragment;
 import com.example.myapplication.presentation.ui.ScreenConfiguration;
 import com.example.myapplication.presentation.ui.ScreenConfigurationHost;
@@ -116,6 +121,31 @@ public class MainActivity extends AppCompatActivity
                 AidlUserListFragment.newAidlRoomDatabaseFragment(),
                 AidlUserListFragment.TAG_AIDL_ROOM
         );
+    }
+
+    @Override
+    public void openBasicMusicPlayer() {
+        navigateTo(new MusicPlayerFragment(), MusicPlayerFragment.TAG);
+    }
+
+    @Override
+    public void openMediaSessionPreview() {
+        navigateTo(new MediaSessionPreviewFragment(), MediaSessionPreviewFragment.TAG);
+    }
+
+    @Override
+    public void openBackgroundPlayback() {
+        navigateTo(new BackgroundPlaybackFragment(), BackgroundPlaybackFragment.TAG);
+    }
+
+    @Override
+    public void openNotificationLockscreen() {
+        navigateTo(new NotificationLockscreenFragment(), NotificationLockscreenFragment.TAG);
+    }
+
+    @Override
+    public void openMediaControllerUi() {
+        navigateTo(new MediaControllerUiFragment(), MediaControllerUiFragment.TAG);
     }
 
     @Override

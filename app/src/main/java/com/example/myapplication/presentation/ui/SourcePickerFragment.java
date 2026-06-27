@@ -9,9 +9,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentSourcePickerBinding;
+import com.example.myapplication.presentation.model.FeatureOption;
+import com.example.myapplication.presentation.ui.adapter.FeatureOptionAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SourcePickerFragment extends Fragment {
 
@@ -23,11 +29,23 @@ public class SourcePickerFragment extends Fragment {
         void openRoomUsers();
 
         void openAidlRoomUsers();
+
+        void openBasicMusicPlayer();
+
+        void openMediaSessionPreview();
+
+        void openBackgroundPlayback();
+
+        void openNotificationLockscreen();
+
+        void openMediaControllerUi();
     }
 
     private FragmentSourcePickerBinding binding;
     private Navigator navigator;
     private ScreenConfigurationHost screenConfigurationHost;
+    private final FeatureOptionAdapter featureOptionAdapter =
+            new FeatureOptionAdapter(this::handleFeatureSelected);
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -54,21 +72,9 @@ public class SourcePickerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.buttonUseAidl.setOnClickListener(v -> {
-            if (navigator != null) {
-                navigator.openAidlUsers();
-            }
-        });
-        binding.buttonUseRoom.setOnClickListener(v -> {
-            if (navigator != null) {
-                navigator.openRoomUsers();
-            }
-        });
-        binding.buttonUseAidlRoom.setOnClickListener(v -> {
-            if (navigator != null) {
-                navigator.openAidlRoomUsers();
-            }
-        });
+        binding.recyclerFeatures.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerFeatures.setAdapter(featureOptionAdapter);
+        featureOptionAdapter.submitList(buildFeatureOptions());
     }
 
     @Override
@@ -95,7 +101,80 @@ public class SourcePickerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (binding != null) {
+            binding.recyclerFeatures.setAdapter(null);
+        }
         binding = null;
         super.onDestroyView();
+    }
+
+    private List<FeatureOption> buildFeatureOptions() {
+        List<FeatureOption> options = new ArrayList<>();
+        options.add(new FeatureOption(
+                FeatureOption.Destination.AIDL_USERS,
+                R.string.source_option_aidl_title,
+                R.string.source_option_aidl_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.ROOM_USERS,
+                R.string.source_option_room_title,
+                R.string.source_option_room_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.AIDL_ROOM_USERS,
+                R.string.source_option_aidl_room_title,
+                R.string.source_option_aidl_room_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.MUSIC_PLAYER,
+                R.string.feature_option_music_title,
+                R.string.feature_option_music_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.MEDIA_SESSION_PREVIEW,
+                R.string.feature_option_media_session_title,
+                R.string.feature_option_media_session_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.BACKGROUND_PLAYBACK,
+                R.string.feature_option_background_playback_title,
+                R.string.feature_option_background_playback_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.MEDIA_NOTIFICATION_LOCKSCREEN,
+                R.string.feature_option_notification_title,
+                R.string.feature_option_notification_message
+        ));
+        options.add(new FeatureOption(
+                FeatureOption.Destination.MEDIA_CONTROLLER_UI,
+                R.string.feature_option_controller_ui_title,
+                R.string.feature_option_controller_ui_message
+        ));
+        return options;
+    }
+
+    private void handleFeatureSelected(FeatureOption option) {
+        if (navigator == null || option == null) {
+            return;
+        }
+
+        FeatureOption.Destination destination = option.getDestination();
+        if (destination == FeatureOption.Destination.AIDL_USERS) {
+            navigator.openAidlUsers();
+        } else if (destination == FeatureOption.Destination.ROOM_USERS) {
+            navigator.openRoomUsers();
+        } else if (destination == FeatureOption.Destination.AIDL_ROOM_USERS) {
+            navigator.openAidlRoomUsers();
+        } else if (destination == FeatureOption.Destination.MUSIC_PLAYER) {
+            navigator.openBasicMusicPlayer();
+        } else if (destination == FeatureOption.Destination.MEDIA_SESSION_PREVIEW) {
+            navigator.openMediaSessionPreview();
+        } else if (destination == FeatureOption.Destination.BACKGROUND_PLAYBACK) {
+            navigator.openBackgroundPlayback();
+        } else if (destination == FeatureOption.Destination.MEDIA_NOTIFICATION_LOCKSCREEN) {
+            navigator.openNotificationLockscreen();
+        } else if (destination == FeatureOption.Destination.MEDIA_CONTROLLER_UI) {
+            navigator.openMediaControllerUi();
+        }
     }
 }

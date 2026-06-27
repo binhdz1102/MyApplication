@@ -3,69 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp"
     tools:context=".presentation.ui.SourcePickerFragment">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:text="@string/source_picker_title"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:gravity="center"
         android:text="@string/source_picker_message"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_use_aidl"
-        style="@style/Widget.Material3.Button"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_features"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/source_option_aidl_title" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/source_option_aidl_message"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_use_room"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="24dp"
-        android:text="@string/source_option_room_title" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/source_option_room_message"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_use_aidl_room"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/source_option_aidl_room_title" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/source_option_aidl_room_message"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        tools:listitem="@layout/item_feature_option" />
 
 </LinearLayout>
