@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MyApplication.Launcher" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/launcher_primary</item>
+        <item name="colorOnPrimary">@color/launcher_background_start</item>
+        <item name="colorSurface">@color/launcher_card_surface</item>
+        <item name="colorOnSurface">@color/launcher_text_primary</item>
+        <item name="colorSecondary">@color/launcher_accent</item>
+        <item name="android:windowBackground">@drawable/bg_dashboard_gradient</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/launcher_background_start</item>
+        <item name="materialCardViewStyle">@style/Widget.MyApplication.Card</item>
+    </style>
+
+    <style name="Widget.MyApplication.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/launcher_card_surface</item>
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="strokeColor">@color/launcher_card_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+</resources>

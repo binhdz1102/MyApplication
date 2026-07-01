@@ -1,24 +1,15 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.ksp)
+    id("launcher.android.application")
+    id("launcher.android.hilt")
 }
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
 
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = 24
-        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -26,34 +17,20 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        aidl = true
-        viewBinding = true
     }
 }
 
 dependencies {
+    implementation(project(":core:ui"))
+    implementation(project(":data:launcher"))
+    implementation(project(":feature:launcher"))
+
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.dagger.hilt.android)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.material)
-    ksp(libs.dagger.hilt.compiler)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
 }

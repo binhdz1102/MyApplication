@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="launcher_background_start">#08141E</color>
+    <color name="launcher_background_end">#153247</color>
+    <color name="launcher_card_surface">#182734</color>
+    <color name="launcher_card_surface_alt">#22394C</color>
+    <color name="launcher_card_stroke">#3D5568</color>
+    <color name="launcher_card_scrim">#B2182734</color>
+    <color name="launcher_text_primary">#F4FBFF</color>
+    <color name="launcher_text_secondary">#A4BACB</color>
+    <color name="launcher_text_muted">#7C93A6</color>
+    <color name="launcher_primary">#75D4FF</color>
+    <color name="launcher_accent">#FFC857</color>
+    <color name="launcher_success">#9DDF8B</color>
+    <color name="launcher_icon_bg_1">#314F6B</color>
+    <color name="launcher_icon_bg_2">#5A4B7D</color>
+    <color name="launcher_icon_bg_3">#6A593B</color>
+    <color name="launcher_icon_bg_4">#365C55</color>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_preview_cd">Mock navigation preview</string>
+    <string name="navigation_mock_label">Navigation</string>
+    <string name="navigation_swipe_label">Swipe up for app list</string>
+    <string name="apps_swipe_label">Swipe down to return to navigation</string>
+    <string name="page_indicator">Page %1$d / %2$d</string>
+    <string name="date_card_label">Calendar</string>
+    <string name="date_card_cd">Calendar card icon</string>
+    <string name="weather_card_label">Weather</string>
+    <string name="weather_card_cd">Weather icon</string>
+    <string name="weather_humidity_label">Humidity</string>
+    <string name="weather_sunny">Sunny</string>
+    <string name="weather_sun_cloud">Sun with clouds</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_rainy">Rainy</string>
+    <string name="weather_snowy">Snowy</string>
+    <string name="weather_thunder">Thunder</string>
+    <string name="media_card_label">Now playing</string>
+    <string name="media_previous_cd">Previous track</string>
+    <string name="media_toggle_cd">Toggle playback</string>
+    <string name="media_next_cd">Next track</string>
+</resources>
