@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,12 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-
-        <service
-            android:name=".data.remote.service.ControlPanelAidlService"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":control_service" />
 
         <activity
             android:name=".MainActivity"
@@ -30,5 +23,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
